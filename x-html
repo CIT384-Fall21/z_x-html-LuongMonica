@@ -1,0 +1,49 @@
+#! /bin/bash
+
+### Content generator for large html files
+# if the file is greater than X:
+#   set application/x-html
+#   run compress on the file 
+#   run base64 encode
+# else use the .html content handler
+
+
+# vars
+STDIN_FILE="$1"
+DATE="$(date)"
+X_SIZE=2048
+#FILESIZE=$(stat -f "%z" $STDIN_FILE) # doesn't work on WSL/sandbox, only for mac
+FILESIZE=$(stat -c "%s" $STDIN_FILE)
+#FILESIZE=$(stat --printf="%s\n" $STDIN_FILE)
+
+# write to log
+echo "This program ran on: $DATE" >> x-html.access.log
+
+# check if file exists
+if [[ -f $STDIN_FILE ]] ; then
+    # set application/x-html
+    if [[ $FILESIZE -ge $X_SIZE ]] ; then
+        HTML_TYPE="application/x-html"
+    else
+        HTML_TYPE="text/html"
+    fi
+    # print headers and blank line
+    echo "HTTP/1.1 200 Success"
+    echo "server: premortal/cit-384/${USER}"
+    echo "date: $(date)"
+    echo "content-type: ${HTML_TYPE}"
+    echo "content-length: ${FILESIZE}"
+    echo ""
+    # if filesize is greater than X, compress and base64 encode
+    if [ $FILESIZE -ge $X_SIZE ] ; then
+        cat "$STDIN_FILE" | compress - | base64
+    else
+        cat "$STDIN_FILE"
+    fi
+else
+    # file doesn't exist: output this instead
+    echo "HTTP/1.1 404 File Not Found"
+    echo "server: premortal/cit-384/${USER}"
+    echo "date: $(date)"
+    echo "ERROR: $STDIN_FILE doesn't exist  $DATE" >> x-html.error.log
+fi
