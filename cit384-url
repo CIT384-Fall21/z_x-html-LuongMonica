@@ -2,7 +2,6 @@
 
 # Current usage: ./cit384-url hostname port URI
 # Future usage: ./cit384-url URL
-# http://www.domain.com/path/to/doc?var1=val1#fragment
 # process_body is a flag that says whether to process the body
 process_body=FALSE
 
@@ -19,9 +18,18 @@ URI=$3
 #       6. Fragment (don't care about)
 
 # future:
+#URL="http://user:passwd@www.domain.com:6666/path/to/doc?var1=val1#fragment"
 #URL=$1
-# parse with sed/awk/grep and cut/etc
+# parse with sed, awk, grep and cut, etc...
+#SCHEME=$(echo $URL | awk -F[:] '{print $1}')
+#SERVER_NAME=$(echo $URL | awk -F[/] '{print $3}')
+### need to figure out URI
+#URI=$(echo $URL | awk -F[/#] '{print $3}')
 
+# get ip addr of domain
+IP=$(dig +short ${SERVER_NAME})
+# add tail -1 if you have multiple aliases and want to get the last line, which is the IP
+#IP=$(dig +short ${SERVER_NAME} | tail -1)
 
 # build the request payload
 cat <<EOF > /tmp/request
@@ -33,17 +41,18 @@ EOF
 # establish a socket,
 # send request
 # receive payload
-socket ${SERVER_NAME} ${PORT} < /tmp/request > /tmp/payload
+socket ${IP} ${PORT} < /tmp/request > /tmp/payload
 
 # read the payload
 while read name value ; do
     if [[ $name == "Content-type:" ]] ; then
         if [[ $value == "application/x-html" ]] ; then
-            process_body=FALSE
+            process_body=TRUE
         fi
     fi
 done < /tmp/payload
 
+# output the body of the request into /tmp/body
 cat /tmp/payload | {
     read name value 
     while [[ -n $name ]] ; do
