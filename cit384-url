@@ -19,12 +19,16 @@ URI=$3
 
 # future:
 #URL="http://user:passwd@www.domain.com:6666/path/to/doc?var1=val1#fragment"
+#URL="http://www.domain.com:6666/path/to/doc?var1=val1#fragment"
+#URL="http://www.domain.com/path/to/doc?var1=val1#fragment"
 #URL=$1
-# parse with sed, awk, grep and cut, etc...
 #SCHEME=$(echo $URL | awk -F[:] '{print $1}')
-#SERVER_NAME=$(echo $URL | awk -F[/] '{print $3}')
-### need to figure out URI
-#URI=$(echo $URL | awk -F[/#] '{print $3}')
+### this part only works if given URL in the format of 2nd URL 
+    #SERVER_PORT=$(echo $URL | awk -F[/] '{print $3}')
+    #SERVER_NAME=$(echo $SERVER_PORT | awk -F[:] '{print $1}')
+    #PORT=$(echo $SERVER_PORT | awk -F[:] '{print $2}')
+#URI_FRAG=/$(echo ${URL#*//*/})
+#URI=$(echo ${URI_FRAG%#*})
 
 # get ip addr of domain
 IP=$(dig +short ${SERVER_NAME})
