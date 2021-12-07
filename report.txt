@@ -1,8 +1,8 @@
 Name: Monica Luong
-Lab Name: proxy-server
-Date Assigned: 12/01/2021
-Date Completed: 12/08/2021
-Status:  Completed
-Outstanding Issues: None
+Lab Name: x-html
+Date Assigned: 09/29/2021
+Date Completed: 10/03/2021
+Status:  Good Progress/Mostly Complete
+Outstanding Issues: wasn't able to fully parse the URL 
 Major Impediments: None
-Feedback Comments:
+Feedback Comments: Didn't fully understand the scope of what needed to be done for this lab
